@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    container_name: insta-cararchy-space
+    ports:
+      - "8080:8888"
+    restart: unless-stopped
