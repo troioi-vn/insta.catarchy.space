@@ -1,4 +1,4 @@
-This is a static page for https://insta.cararchy.space. Placeholder for now, but will eventually be a more sophisticated landing page.
+This is a static page for https://insta.catarchy.space. Placeholder for now, but will eventually be a more sophisticated landing page.
 
 ## Run with Docker
 
@@ -19,6 +19,6 @@ docker compose down
 ### Option 2: Plain Docker
 
 ```bash
-docker build -t insta-cararchy-site .
-docker run --rm -p 8080:80 insta-cararchy-site
+docker build -t insta-catarchy-site .
+docker run --rm -p 8080:80 insta-catarchy-site
 ```

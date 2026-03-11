@@ -14,4 +14,4 @@ steps:
     commands:
       - test -f index.html
       - test -f Dockerfile
-      - grep -q "insta.cararchy.space" README.md
+      - grep -q "insta.catarchy.space" README.md
