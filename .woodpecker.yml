@@ -2,6 +2,20 @@ when:
   - event: [push, manual]
 
 steps:
+  notify_start:
+    image: curlimages/curl:8.16.0
+    environment:
+      TELEGRAM_BOT_TOKEN:
+        from_secret: TELEGRAM_BOT_TOKEN
+      TELEGRAM_CHAT_ID:
+        from_secret: TELEGRAM_CHAT_ID
+    commands:
+      - >
+        curl -sS -X POST
+        "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
+        -d chat_id="${TELEGRAM_CHAT_ID}"
+        -d text="STARTED: ${CI_REPO} | branch=${CI_COMMIT_BRANCH} | pipeline=#${CI_PIPELINE_NUMBER} | commit=${CI_COMMIT_SHA}"
+
   verify_docker_files:
     image: alpine:3.22
     commands:
@@ -15,3 +29,35 @@ steps:
       - test -f index.html
       - test -f Dockerfile
       - grep -q "insta.catarchy.space" README.md
+
+  notify_success:
+    image: curlimages/curl:8.16.0
+    when:
+      - status: success
+    environment:
+      TELEGRAM_BOT_TOKEN:
+        from_secret: TELEGRAM_BOT_TOKEN
+      TELEGRAM_CHAT_ID:
+        from_secret: TELEGRAM_CHAT_ID
+    commands:
+      - >
+        curl -sS -X POST
+        "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
+        -d chat_id="${TELEGRAM_CHAT_ID}"
+        -d text="SUCCESS: ${CI_REPO} | branch=${CI_COMMIT_BRANCH} | pipeline=#${CI_PIPELINE_NUMBER} | commit=${CI_COMMIT_SHA}"
+
+  notify_failure:
+    image: curlimages/curl:8.16.0
+    when:
+      - status: failure
+    environment:
+      TELEGRAM_BOT_TOKEN:
+        from_secret: TELEGRAM_BOT_TOKEN
+      TELEGRAM_CHAT_ID:
+        from_secret: TELEGRAM_CHAT_ID
+    commands:
+      - >
+        curl -sS -X POST
+        "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
+        -d chat_id="${TELEGRAM_CHAT_ID}"
+        -d text="FAILED: ${CI_REPO} | branch=${CI_COMMIT_BRANCH} | pipeline=#${CI_PIPELINE_NUMBER} | commit=${CI_COMMIT_SHA}"
