@@ -12,15 +12,16 @@ steps:
     commands:
       - test -n "$${TELEGRAM_BOT_TOKEN}"
       - test -n "$${TELEGRAM_CHAT_ID}"
-      - >
-        curl -sS -X POST
-        "https://api.telegram.org/bot$${TELEGRAM_BOT_TOKEN}/sendMessage"
-        -d chat_id="$${TELEGRAM_CHAT_ID}"
-        --data-urlencode text="🚀 ${CI_REPO}
-Deployment started at $$(date -u +%H:%M:%S) UTC.
-Branch: ${CI_COMMIT_BRANCH}
-Pipeline: #${CI_PIPELINE_NUMBER}
-Commit: ${CI_COMMIT_SHA}"
+      - |
+        message="🚀 ${CI_REPO}
+        Deployment started at $$(date -u +%H:%M:%S) UTC.
+        Branch: ${CI_COMMIT_BRANCH}
+        Pipeline: #${CI_PIPELINE_NUMBER}
+        Commit: ${CI_COMMIT_SHA}"
+        curl -sS -X POST \
+          "https://api.telegram.org/bot$${TELEGRAM_BOT_TOKEN}/sendMessage" \
+          -d chat_id="$${TELEGRAM_CHAT_ID}" \
+          --data-urlencode "text=$${message}"
 
   debug_secret_presence:
     image: alpine:3.22
@@ -59,15 +60,16 @@ Commit: ${CI_COMMIT_SHA}"
     commands:
       - test -n "$${TELEGRAM_BOT_TOKEN}"
       - test -n "$${TELEGRAM_CHAT_ID}"
-      - >
-        curl -sS -X POST
-        "https://api.telegram.org/bot$${TELEGRAM_BOT_TOKEN}/sendMessage"
-        -d chat_id="$${TELEGRAM_CHAT_ID}"
-        --data-urlencode text="✅ ${CI_REPO}
-Deployment finished at $$(date -u +%H:%M:%S) UTC.
-Branch: ${CI_COMMIT_BRANCH}
-Pipeline: #${CI_PIPELINE_NUMBER}
-Commit: ${CI_COMMIT_SHA}"
+      - |
+        message="✅ ${CI_REPO}
+        Deployment finished at $$(date -u +%H:%M:%S) UTC.
+        Branch: ${CI_COMMIT_BRANCH}
+        Pipeline: #${CI_PIPELINE_NUMBER}
+        Commit: ${CI_COMMIT_SHA}"
+        curl -sS -X POST \
+          "https://api.telegram.org/bot$${TELEGRAM_BOT_TOKEN}/sendMessage" \
+          -d chat_id="$${TELEGRAM_CHAT_ID}" \
+          --data-urlencode "text=$${message}"
 
   notify_failure:
     image: curlimages/curl:8.16.0
@@ -81,12 +83,13 @@ Commit: ${CI_COMMIT_SHA}"
     commands:
       - test -n "$${TELEGRAM_BOT_TOKEN}"
       - test -n "$${TELEGRAM_CHAT_ID}"
-      - >
-        curl -sS -X POST
-        "https://api.telegram.org/bot$${TELEGRAM_BOT_TOKEN}/sendMessage"
-        -d chat_id="$${TELEGRAM_CHAT_ID}"
-        --data-urlencode text="❌ ${CI_REPO}
-Deployment failed at $$(date -u +%H:%M:%S) UTC.
-Branch: ${CI_COMMIT_BRANCH}
-Pipeline: #${CI_PIPELINE_NUMBER}
-Commit: ${CI_COMMIT_SHA}"
+      - |
+        message="❌ ${CI_REPO}
+        Deployment failed at $$(date -u +%H:%M:%S) UTC.
+        Branch: ${CI_COMMIT_BRANCH}
+        Pipeline: #${CI_PIPELINE_NUMBER}
+        Commit: ${CI_COMMIT_SHA}"
+        curl -sS -X POST \
+          "https://api.telegram.org/bot$${TELEGRAM_BOT_TOKEN}/sendMessage" \
+          -d chat_id="$${TELEGRAM_CHAT_ID}" \
+          --data-urlencode "text=$${message}"
