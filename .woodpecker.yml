@@ -10,11 +10,24 @@ steps:
       TELEGRAM_CHAT_ID:
         from_secret: TELEGRAM_CHAT_ID
     commands:
+      - test -n "${TELEGRAM_BOT_TOKEN}"
+      - test -n "${TELEGRAM_CHAT_ID}"
       - >
         curl -sS -X POST
         "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
         -d chat_id="${TELEGRAM_CHAT_ID}"
         -d text="STARTED: ${CI_REPO} | branch=${CI_COMMIT_BRANCH} | pipeline=#${CI_PIPELINE_NUMBER} | commit=${CI_COMMIT_SHA}"
+
+  debug_secret_presence:
+    image: alpine:3.22
+    environment:
+      TELEGRAM_BOT_TOKEN:
+        from_secret: TELEGRAM_BOT_TOKEN
+      TELEGRAM_CHAT_ID:
+        from_secret: TELEGRAM_CHAT_ID
+    commands:
+      - test -n "${TELEGRAM_BOT_TOKEN}"
+      - test -n "${TELEGRAM_CHAT_ID}"
 
   verify_docker_files:
     image: alpine:3.22
@@ -40,6 +53,8 @@ steps:
       TELEGRAM_CHAT_ID:
         from_secret: TELEGRAM_CHAT_ID
     commands:
+      - test -n "${TELEGRAM_BOT_TOKEN}"
+      - test -n "${TELEGRAM_CHAT_ID}"
       - >
         curl -sS -X POST
         "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -56,6 +71,8 @@ steps:
       TELEGRAM_CHAT_ID:
         from_secret: TELEGRAM_CHAT_ID
     commands:
+      - test -n "${TELEGRAM_BOT_TOKEN}"
+      - test -n "${TELEGRAM_CHAT_ID}"
       - >
         curl -sS -X POST
         "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
