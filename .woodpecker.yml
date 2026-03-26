@@ -8,23 +8,36 @@ steps:
   notify_start:
     image: curlimages/curl:8.16.0
     environment:
-      TELEGRAM_BOT_TOKEN:
-        from_secret: TELEGRAM_BOT_TOKEN
-      TELEGRAM_CHAT_ID:
-        from_secret: TELEGRAM_CHAT_ID
+      N8N_WEBHOOK_URL:
+        from_secret: N8N_WEBHOOK_URL
+      N8N_WEBHOOK_NAME:
+        from_secret: N8N_WEBHOOK_NAME
+      N8N_WEBHOOK_TOKEN:
+        from_secret: N8N_WEBHOOK_TOKEN
     commands:
-      - test -n "$${TELEGRAM_BOT_TOKEN}"
-      - test -n "$${TELEGRAM_CHAT_ID}"
+      - test -n "$${N8N_WEBHOOK_URL}"
+      - test -n "$${N8N_WEBHOOK_NAME}"
+      - test -n "$${N8N_WEBHOOK_TOKEN}"
       - |
-        message="🚀 ${CI_REPO}
-        Deployment started at $$(date -u +%H:%M:%S) UTC.
-        Branch: ${CI_COMMIT_BRANCH}
-        Pipeline: #${CI_PIPELINE_NUMBER}
-        Commit: ${CI_COMMIT_SHA}"
         curl -sS -X POST \
-          "https://api.telegram.org/bot$${TELEGRAM_BOT_TOKEN}/sendMessage" \
-          -d chat_id="$${TELEGRAM_CHAT_ID}" \
-          --data-urlencode "text=$${message}"
+          "$${N8N_WEBHOOK_URL}" \
+          -H "$${N8N_WEBHOOK_NAME}: $${N8N_WEBHOOK_TOKEN}" \
+          -H "Content-Type: application/json" \
+          --data @- <<EOF
+        {
+          "event": "deploy",
+          "phase": "start",
+          "status": "started",
+          "source": "woodpecker",
+          "repo": "${CI_REPO}",
+          "branch": "${CI_COMMIT_BRANCH}",
+          "pipeline_number": "${CI_PIPELINE_NUMBER}",
+          "commit_sha": "${CI_COMMIT_SHA}",
+          "target": "catarchy2",
+          "site": "insta.catarchy.space",
+          "sent_at_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        }
+        EOF
 
   verify_project_files:
     image: alpine:3.22
@@ -56,43 +69,69 @@ steps:
     when:
       - status: success
     environment:
-      TELEGRAM_BOT_TOKEN:
-        from_secret: TELEGRAM_BOT_TOKEN
-      TELEGRAM_CHAT_ID:
-        from_secret: TELEGRAM_CHAT_ID
+      N8N_WEBHOOK_URL:
+        from_secret: N8N_WEBHOOK_URL
+      N8N_WEBHOOK_NAME:
+        from_secret: N8N_WEBHOOK_NAME
+      N8N_WEBHOOK_TOKEN:
+        from_secret: N8N_WEBHOOK_TOKEN
     commands:
-      - test -n "$${TELEGRAM_BOT_TOKEN}"
-      - test -n "$${TELEGRAM_CHAT_ID}"
+      - test -n "$${N8N_WEBHOOK_URL}"
+      - test -n "$${N8N_WEBHOOK_NAME}"
+      - test -n "$${N8N_WEBHOOK_TOKEN}"
       - |
-        message="✅ ${CI_REPO}
-        Deployment finished at $$(date -u +%H:%M:%S) UTC.
-        Branch: ${CI_COMMIT_BRANCH}
-        Pipeline: #${CI_PIPELINE_NUMBER}
-        Commit: ${CI_COMMIT_SHA}"
         curl -sS -X POST \
-          "https://api.telegram.org/bot$${TELEGRAM_BOT_TOKEN}/sendMessage" \
-          -d chat_id="$${TELEGRAM_CHAT_ID}" \
-          --data-urlencode "text=$${message}"
+          "$${N8N_WEBHOOK_URL}" \
+          -H "$${N8N_WEBHOOK_NAME}: $${N8N_WEBHOOK_TOKEN}" \
+          -H "Content-Type: application/json" \
+          --data @- <<EOF
+        {
+          "event": "deploy",
+          "phase": "finish",
+          "status": "success",
+          "source": "woodpecker",
+          "repo": "${CI_REPO}",
+          "branch": "${CI_COMMIT_BRANCH}",
+          "pipeline_number": "${CI_PIPELINE_NUMBER}",
+          "commit_sha": "${CI_COMMIT_SHA}",
+          "target": "catarchy2",
+          "site": "insta.catarchy.space",
+          "sent_at_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        }
+        EOF
 
   notify_failure:
     image: curlimages/curl:8.16.0
     when:
       - status: failure
     environment:
-      TELEGRAM_BOT_TOKEN:
-        from_secret: TELEGRAM_BOT_TOKEN
-      TELEGRAM_CHAT_ID:
-        from_secret: TELEGRAM_CHAT_ID
+      N8N_WEBHOOK_URL:
+        from_secret: N8N_WEBHOOK_URL
+      N8N_WEBHOOK_NAME:
+        from_secret: N8N_WEBHOOK_NAME
+      N8N_WEBHOOK_TOKEN:
+        from_secret: N8N_WEBHOOK_TOKEN
     commands:
-      - test -n "$${TELEGRAM_BOT_TOKEN}"
-      - test -n "$${TELEGRAM_CHAT_ID}"
+      - test -n "$${N8N_WEBHOOK_URL}"
+      - test -n "$${N8N_WEBHOOK_NAME}"
+      - test -n "$${N8N_WEBHOOK_TOKEN}"
       - |
-        message="❌ ${CI_REPO}
-        Deployment failed at $$(date -u +%H:%M:%S) UTC.
-        Branch: ${CI_COMMIT_BRANCH}
-        Pipeline: #${CI_PIPELINE_NUMBER}
-        Commit: ${CI_COMMIT_SHA}"
         curl -sS -X POST \
-          "https://api.telegram.org/bot$${TELEGRAM_BOT_TOKEN}/sendMessage" \
-          -d chat_id="$${TELEGRAM_CHAT_ID}" \
-          --data-urlencode "text=$${message}"
+          "$${N8N_WEBHOOK_URL}" \
+          -H "$${N8N_WEBHOOK_NAME}: $${N8N_WEBHOOK_TOKEN}" \
+          -H "Content-Type: application/json" \
+          --data @- <<EOF
+        {
+          "event": "deploy",
+          "phase": "finish",
+          "status": "failure",
+          "source": "woodpecker",
+          "repo": "${CI_REPO}",
+          "branch": "${CI_COMMIT_BRANCH}",
+          "pipeline_number": "${CI_PIPELINE_NUMBER}",
+          "commit_sha": "${CI_COMMIT_SHA}",
+          "target": "catarchy2",
+          "site": "insta.catarchy.space",
+          "sent_at_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        }
+        EOF
