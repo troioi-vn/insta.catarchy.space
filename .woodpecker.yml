@@ -19,6 +19,10 @@ steps:
       - test -n "$${N8N_WEBHOOK_NAME}"
       - test -n "$${N8N_WEBHOOK_TOKEN}"
       - |
+        start_epoch="$$(date -u +%s)"
+        start_utc="$$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        printf '%s\n' "$$start_epoch" > .woodpecker-deploy-start-epoch
+
         curl -sS -X POST \
           "$${N8N_WEBHOOK_URL}" \
           -H "$${N8N_WEBHOOK_NAME}: $${N8N_WEBHOOK_TOKEN}" \
@@ -35,7 +39,9 @@ steps:
           "commit_sha": "${CI_COMMIT_SHA}",
           "target": "catarchy2",
           "site": "insta.catarchy.space",
-          "sent_at_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          "started_at_utc": "$$start_utc",
+          "started_at_unix": $$start_epoch,
+          "sent_at_utc": "$$start_utc"
         }
         EOF
 
@@ -80,6 +86,15 @@ steps:
       - test -n "$${N8N_WEBHOOK_NAME}"
       - test -n "$${N8N_WEBHOOK_TOKEN}"
       - |
+        finish_epoch="$$(date -u +%s)"
+        finish_utc="$$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        start_epoch="$$(cat .woodpecker-deploy-start-epoch 2>/dev/null || true)"
+        if [ -n "$$start_epoch" ]; then
+          duration_seconds=$$((finish_epoch - start_epoch))
+        else
+          duration_seconds=null
+        fi
+
         curl -sS -X POST \
           "$${N8N_WEBHOOK_URL}" \
           -H "$${N8N_WEBHOOK_NAME}: $${N8N_WEBHOOK_TOKEN}" \
@@ -96,9 +111,13 @@ steps:
           "commit_sha": "${CI_COMMIT_SHA}",
           "target": "catarchy2",
           "site": "insta.catarchy.space",
-          "sent_at_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          "finished_at_utc": "$$finish_utc",
+          "finished_at_unix": $$finish_epoch,
+          "duration_seconds": $$duration_seconds,
+          "sent_at_utc": "$$finish_utc"
         }
         EOF
+      - rm -f .woodpecker-deploy-start-epoch
 
   notify_failure:
     image: curlimages/curl:8.16.0
@@ -116,6 +135,15 @@ steps:
       - test -n "$${N8N_WEBHOOK_NAME}"
       - test -n "$${N8N_WEBHOOK_TOKEN}"
       - |
+        finish_epoch="$$(date -u +%s)"
+        finish_utc="$$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        start_epoch="$$(cat .woodpecker-deploy-start-epoch 2>/dev/null || true)"
+        if [ -n "$$start_epoch" ]; then
+          duration_seconds=$$((finish_epoch - start_epoch))
+        else
+          duration_seconds=null
+        fi
+
         curl -sS -X POST \
           "$${N8N_WEBHOOK_URL}" \
           -H "$${N8N_WEBHOOK_NAME}: $${N8N_WEBHOOK_TOKEN}" \
@@ -132,6 +160,10 @@ steps:
           "commit_sha": "${CI_COMMIT_SHA}",
           "target": "catarchy2",
           "site": "insta.catarchy.space",
-          "sent_at_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          "finished_at_utc": "$$finish_utc",
+          "finished_at_unix": $$finish_epoch,
+          "duration_seconds": $$duration_seconds,
+          "sent_at_utc": "$$finish_utc"
         }
         EOF
+      - rm -f .woodpecker-deploy-start-epoch
