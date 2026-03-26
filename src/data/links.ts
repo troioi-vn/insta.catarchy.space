@@ -25,8 +25,8 @@ export const links: LinkItem[] = [
     title: "Donate"
   },
   {
-    href: "https://catarchy.space/booking/",
-    title: "Booking"
+    href: "https://catarchy.space/#visit",
+    title: "Visit"
   },
   {
     href: "https://www.youtube.com/catarchy",
