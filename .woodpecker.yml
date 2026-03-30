@@ -21,6 +21,7 @@ steps:
       - |
         start_epoch="$$(date -u +%s)"
         start_utc="$$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        commit_message_json="$$(printf '%s\n' "${CI_COMMIT_MESSAGE}" | sed -n '1{s/[[:space:]][[:space:]]*/ /g; s/^ //; s/ $//; s/\\/\\\\/g; s/\"/\\\\\"/g; p; q;}')"
         printf '%s\n' "$$start_epoch" > .woodpecker-deploy-start-epoch
 
         curl -sS -X POST \
@@ -36,6 +37,7 @@ steps:
           "repo": "${CI_REPO}",
           "branch": "${CI_COMMIT_BRANCH}",
           "pipeline_number": "${CI_PIPELINE_NUMBER}",
+          "commit_message": "$$commit_message_json",
           "commit_sha": "${CI_COMMIT_SHA}",
           "target": "catarchy2",
           "site": "insta.catarchy.space",
@@ -89,6 +91,7 @@ steps:
         finish_epoch="$$(date -u +%s)"
         finish_utc="$$(date -u +%Y-%m-%dT%H:%M:%SZ)"
         start_epoch="$$(cat .woodpecker-deploy-start-epoch 2>/dev/null || true)"
+        commit_message_json="$$(printf '%s\n' "${CI_COMMIT_MESSAGE}" | sed -n '1{s/[[:space:]][[:space:]]*/ /g; s/^ //; s/ $//; s/\\/\\\\/g; s/\"/\\\\\"/g; p; q;}')"
         if [ -n "$$start_epoch" ]; then
           duration_seconds=$$((finish_epoch - start_epoch))
         else
@@ -108,6 +111,7 @@ steps:
           "repo": "${CI_REPO}",
           "branch": "${CI_COMMIT_BRANCH}",
           "pipeline_number": "${CI_PIPELINE_NUMBER}",
+          "commit_message": "$$commit_message_json",
           "commit_sha": "${CI_COMMIT_SHA}",
           "target": "catarchy2",
           "site": "insta.catarchy.space",
@@ -138,6 +142,7 @@ steps:
         finish_epoch="$$(date -u +%s)"
         finish_utc="$$(date -u +%Y-%m-%dT%H:%M:%SZ)"
         start_epoch="$$(cat .woodpecker-deploy-start-epoch 2>/dev/null || true)"
+        commit_message_json="$$(printf '%s\n' "${CI_COMMIT_MESSAGE}" | sed -n '1{s/[[:space:]][[:space:]]*/ /g; s/^ //; s/ $//; s/\\/\\\\/g; s/\"/\\\\\"/g; p; q;}')"
         if [ -n "$$start_epoch" ]; then
           duration_seconds=$$((finish_epoch - start_epoch))
         else
@@ -157,6 +162,7 @@ steps:
           "repo": "${CI_REPO}",
           "branch": "${CI_COMMIT_BRANCH}",
           "pipeline_number": "${CI_PIPELINE_NUMBER}",
+          "commit_message": "$$commit_message_json",
           "commit_sha": "${CI_COMMIT_SHA}",
           "target": "catarchy2",
           "site": "insta.catarchy.space",
