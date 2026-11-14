@@ -3,7 +3,9 @@ This is an Astro-based landing page for https://insta.catarchy.space (used as a 
 Production deployment is static:
 
 - CI builds the Astro site
-- the generated `dist/` files are copied to the configured web root
+- the generated `dist/` files are copied through the preconfigured Docker volume `static-site-${CI_REPO_NAME}`
+- the host binds that volume to the web root
+- CI compares the public page with the built HTML before reporting success
 - the target web server serves the site directly from that directory
 
 Environment-specific server names, SSH targets, and web-root paths are kept out
