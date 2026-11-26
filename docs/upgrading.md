@@ -6,7 +6,7 @@ Dependency upgrades are normal maintenance, but not every upgrade has the same r
 - Major updates are deliberate engineering work.
 - The important distinction is not only "how do we install updates?" but also "how do we notice versions that our current constraints intentionally do not allow?"
 
-This project is a small Astro static landing page for `insta.catarchy.space`. The deployed build currently uses npm:
+This project is a small Astro static landing page for `insta.catarchy.org`. The deployed build currently uses npm:
 
 - `package.json` defines the Astro dependency and scripts.
 - `package-lock.json` is the committed lockfile.

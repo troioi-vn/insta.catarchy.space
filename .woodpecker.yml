@@ -40,7 +40,7 @@ steps:
           "commit_message_b64": "$$commit_message_b64",
           "commit_sha": "${CI_COMMIT_SHA}",
           "target": "static-site-host",
-          "site": "insta.catarchy.space",
+          "site": "insta.catarchy.org",
           "started_at_utc": "$$start_utc",
           "started_at_unix": $$start_epoch,
           "sent_at_utc": "$$start_utc"
@@ -54,7 +54,7 @@ steps:
       - test -f package-lock.json
       - test -f astro.config.mjs
       - test -f src/pages/index.astro
-      - grep -q "insta.catarchy.space" README.md
+      - grep -q "insta.catarchy.org" README.md
 
   build_site:
     image: node:22-alpine
@@ -121,7 +121,7 @@ steps:
           "commit_message_b64": "$$commit_message_b64",
           "commit_sha": "${CI_COMMIT_SHA}",
           "target": "static-site-host",
-          "site": "insta.catarchy.space",
+          "site": "insta.catarchy.org",
           "finished_at_utc": "$$finish_utc",
           "finished_at_unix": $$finish_epoch,
           "duration_seconds": $$duration_seconds,
@@ -172,7 +172,7 @@ steps:
           "commit_message_b64": "$$commit_message_b64",
           "commit_sha": "${CI_COMMIT_SHA}",
           "target": "static-site-host",
-          "site": "insta.catarchy.space",
+          "site": "insta.catarchy.org",
           "finished_at_utc": "$$finish_utc",
           "finished_at_unix": $$finish_epoch,
           "duration_seconds": $$duration_seconds,
