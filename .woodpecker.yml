@@ -76,7 +76,7 @@ steps:
     image: curlimages/curl:8.16.0
     commands:
       - >-
-        curl -fsS --max-time 30 -H 'Cache-Control: no-cache' "https://${CI_REPO_NAME}/?deploy=${CI_COMMIT_SHA}" -o /tmp/deployed-index.html
+        curl -fsS --max-time 30 -H 'Cache-Control: no-cache' "https://insta.catarchy.org/?deploy=${CI_COMMIT_SHA}" -o /tmp/deployed-index.html
       - cmp dist/index.html /tmp/deployed-index.html
 
   notify_success:
